@@ -4,8 +4,8 @@ import {
   createSlice,
   // PayloadAction,
 } from '@reduxjs/toolkit';
-import moment, { Moment } from 'moment';
 
+import { isPost } from '../functions/typeGuards';
 import agent from './agent';
 import { browseComment } from './comments';
 
@@ -16,7 +16,7 @@ export type Post = {
   title: string;
   author: string;
   content: string;
-  time: Moment;
+  time: string;
   commentIds: number[];
 };
 
@@ -111,11 +111,12 @@ const postSlice = createSlice({
           author,
           title,
           content,
-          time: moment(time_), // parse time string into moment object
+          time: time_, // parse time string into moment object
           commentIds: state.entities[id]?.commentIds ?? [],
         })),
       );
     });
+
     builder.addCase(readPost.fulfilled, (state, action) => {
       const { id, author, title, content, time_ } = action.payload;
       postsAdapter.upsertOne(state, {
@@ -123,9 +124,29 @@ const postSlice = createSlice({
         author,
         title,
         content,
-        time: moment(time_), // parse time string into moment object
+        time: time_, // parse time string into moment object
         commentIds: state.entities[id]?.commentIds ?? [],
       });
+    });
+
+    builder.addCase(browseComment.fulfilled, (state, action) => {
+      const postId = action.meta.arg.postId;
+      const current = state.entities[postId];
+      if (isPost(current)) {
+        postsAdapter.upsertOne(state, {
+          ...current,
+          commentIds: action.payload.map(({ id }) => id),
+        });
+      } else {
+        postsAdapter.addOne(state, {
+          id: postId,
+          author: '',
+          title: '',
+          content: '',
+          time: '',
+          commentIds: action.payload.map(({ id }) => id),
+        });
+      }
     });
   },
 });

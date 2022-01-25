@@ -1,12 +1,15 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import agent from './agent';
 
 // type of slice entity ------------------------------------------------------
 
 export type Comment = {
+  id: number;
+  postId: number;
   username: string;
   content: string;
+  time: string;
 };
 
 // interfaces for response and action payload type check ---------------------
@@ -35,4 +38,30 @@ export const browseComment = createAsyncThunk(
 
 // TODO: addComment
 
-// TODO: comment slice
+// entity adaptor -------------------------------------------------------------
+
+const commentAdapter = createEntityAdapter<Comment>({
+  selectId: (comment) => comment.id,
+});
+
+const commentSlice = createSlice({
+  name: 'comments',
+  initialState: commentAdapter.getInitialState(),
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(browseComment.fulfilled, (state, action) => {
+      commentAdapter.upsertMany(
+        state,
+        action.payload.map(({ id, post_id, username, content, time_ }) => ({
+          id,
+          postId: post_id,
+          username,
+          content,
+          time: time_,
+        })),
+      );
+    });
+  },
+});
+
+export default commentSlice;
