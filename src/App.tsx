@@ -1,10 +1,21 @@
-import { Routes } from 'react-router-dom';
+import './App.css';
 
-export default function App() {
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+
+function App() {
   return (
-    <div className="App">
-      <div className="m-3 bg-slate-400">Nav</div>
-      <Routes></Routes>
+    <div className="bg-slate-200 h-screen pt-3">
+      <nav className="bg-cyan-700 text-blue-300 p-2 mx-3 mb-3 rounded-md shadow-md">
+        Blug
+      </nav>
+      <main>
+        <Routes>
+          <Route path="/"></Route>
+        </Routes>
+      </main>
     </div>
   );
 }
+
+export default App;
