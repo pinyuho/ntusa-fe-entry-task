@@ -6,6 +6,7 @@ import CommentListItem from './CommentListItem';
 interface ParamsType {
   post: Post;
 }
+
 export default function CommentList({ post }: ParamsType) {
   return (
     <div className="mt-10">

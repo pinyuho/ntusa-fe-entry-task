@@ -57,7 +57,7 @@ export interface ReadPostAndCommentsArgs {
 // first-level thunks: aligned with backend endpoints and methods ------------
 
 export const browseAllPosts = createAsyncThunk('posts/browseAllPosts', async () => {
-  const res = await agent.get<BrowseAllPostsPayload[]>('/post', {});
+  const res = await agent.get<BrowseAllPostsPayload[]>('/post');
   return res.data;
 });
 
@@ -111,7 +111,7 @@ const postSlice = createSlice({
           author,
           title,
           content,
-          time: time_, // parse time string into moment object
+          time: time_,
           commentIds: state.entities[id]?.commentIds ?? [],
         })),
       );
@@ -124,7 +124,7 @@ const postSlice = createSlice({
         author,
         title,
         content,
-        time: time_, // parse time string into moment object
+        time: time_,
         commentIds: state.entities[id]?.commentIds ?? [],
       });
     });
