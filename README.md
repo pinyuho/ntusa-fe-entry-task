@@ -6,7 +6,7 @@ Project template for NTUSA frontend Entry Task.
 
 ### Backend
 
-We first need to get a backend up and running on localhost. Follow instructions on the `ntusa-fe-entry-task-backend` repo.
+We first need to get a backend up and running on localhost. Follow instructions on the [`ntusa-fe-entry-task-backend`](https://gitlab.com/ntu-sa/ntusa-website/ntusa-fe-entry-task-backend) repo.
 
 ### Frontend
 
