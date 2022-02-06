@@ -50,9 +50,26 @@ export interface AddPostArgs {
   content: string;
 }
 
+export interface EditPostArgs {
+  title: string;
+  author: string;
+  content: string;
+  postId: number;
+}
+
 export interface ReadPostAndCommentsArgs {
   postId: number;
 }
+
+// higher-level thunks: for component functionalities -------------------------
+
+export const readPostAndComments = createAsyncThunk(
+  'post/readPostAndComments',
+  async ({ postId }: ReadPostAndCommentsArgs, { dispatch }) => {
+    dispatch(readPost({ postId }));
+    dispatch(browseComment({ postId }));
+  },
+);
 
 // first-level thunks: aligned with backend endpoints and methods ------------
 
@@ -79,14 +96,12 @@ export const addPost = createAsyncThunk(
 );
 
 // TODO: editPost
-
-// higher-level thunks: for component functionalities -------------------------
-
-export const readPostAndComments = createAsyncThunk(
-  'post/readPostAndComments',
-  async ({ postId }: ReadPostAndCommentsArgs, { dispatch }) => {
-    dispatch(readPost({ postId }));
-    dispatch(browseComment({ postId }));
+export const editPost = createAsyncThunk(
+  'posts/editPost',
+  async ({ title, author, content, postId }: EditPostArgs, { dispatch }) => {
+    await agent.patch(`/post/${postId}`, { title, author, content });
+    // refetch (invalidate) all posts
+    dispatch(readPostAndComments({ postId }));
   },
 );
 

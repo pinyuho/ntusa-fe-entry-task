@@ -1,6 +1,7 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
 import agent from './agent';
+import { readPostAndComments } from './posts';
 
 // type of slice entity ------------------------------------------------------
 
@@ -28,6 +29,12 @@ export interface BrowseCommentArgs {
   postId: number;
 }
 
+export interface AddCommentArgs {
+  postId: number;
+  username: string;
+  content: string;
+}
+
 export const browseComment = createAsyncThunk(
   'comments/browseComment',
   async ({ postId }: BrowseCommentArgs) => {
@@ -37,6 +44,14 @@ export const browseComment = createAsyncThunk(
 );
 
 // TODO: addComment
+export const addComment = createAsyncThunk(
+  'comments/addComment',
+  async ({ postId, username, content }: AddCommentArgs, { dispatch }) => {
+    await agent.post(`/post/${postId}/comment`, { username, content });
+    // refetch (invalidate) this post
+    dispatch(readPostAndComments({ postId: Number(postId) }));
+  },
+);
 
 // entity adaptor -------------------------------------------------------------
 
